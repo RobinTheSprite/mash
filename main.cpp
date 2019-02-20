@@ -27,7 +27,7 @@ int main()
         string partOfCommand;
         while(inputStream >> partOfCommand)
         {
-			ShellExecute(NULL, NULL, partOfCommand.c_str(), "", NULL, SW_NORMAL);
+			ShellExecute(nullptr, nullptr, partOfCommand.c_str(), "", nullptr, SW_NORMAL);
         }
 
 		if (partOfCommand == "exit")

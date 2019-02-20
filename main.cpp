@@ -6,11 +6,20 @@ using std::endl;
 using std::string;
 #include <sstream>
 using std::stringstream;
+#include "shlobj.h"
+#include "commands.h"
+
 
 int main()
 {
+	char directory[MAX_PATH];
+	
     while(true)
     {
+		size_t bufferLength = GetCurrentDirectory(MAX_PATH, directory);
+		string dir(directory);
+		cout << dir << "=>";
+
         string inputLine;
         getline(cin, inputLine);
         stringstream inputStream(inputLine);
@@ -18,10 +27,14 @@ int main()
         string partOfCommand;
         while(inputStream >> partOfCommand)
         {
-            cout << partOfCommand << endl;
+			ShellExecute(NULL, NULL, partOfCommand.c_str(), "", NULL, SW_NORMAL);
         }
 
-        break;
+		if (partOfCommand == "exit")
+		{
+			break;
+		}
     }
+
     return 0;
 }

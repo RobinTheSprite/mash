@@ -10,10 +10,12 @@ using std::stringstream;
 #include "commands.h"
 
 
-int main()
+int main(int argc, TCHAR *argv[])
 {
+    STARTUPINFO startupInfo;
+    PROCESS_INFORMATION processInfo;
+
 	char directory[MAX_PATH];
-	
     while(true)
     {
 		size_t bufferLength = GetCurrentDirectory(MAX_PATH, directory);
@@ -27,7 +29,9 @@ int main()
         string partOfCommand;
         while(inputStream >> partOfCommand)
         {
-			ShellExecute(NULL, NULL, partOfCommand.c_str(), "", NULL, SW_NORMAL);
+            char * prt = const_cast<char *>("notepad");
+            CreateProcess(nullptr, prt, NULL, NULL, FALSE, 0, NULL, NULL, &startupInfo, &processInfo);
+			//ShellExecute(NULL, NULL, partOfCommand.c_str(), "", NULL, SW_NORMAL);
         }
 
 		if (partOfCommand == "exit")
@@ -35,6 +39,11 @@ int main()
 			break;
 		}
     }
+
+    WaitForSingleObject(processInfo.hProcess, INFINITE);
+
+    CloseHandle( processInfo.hProcess );
+    CloseHandle( processInfo.hThread );
 
     return 0;
 }

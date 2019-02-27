@@ -37,11 +37,10 @@ int main(int argc, TCHAR *argv[])
                 break;
             }
             char * prt = const_cast<char *>(partOfCommand.c_str());
-            if (!CreateProcess(nullptr, prt, NULL, NULL, false, NORMAL_PRIORITY_CLASS, NULL, NULL, &startupInfo, &processInfo))
+            if (!CreateProcess(nullptr, prt, nullptr, nullptr, false, NORMAL_PRIORITY_CLASS, nullptr, nullptr, &startupInfo, &processInfo))
             {
                 cout << "No command called " << prt << endl;
             }
-			//ShellExecute(NULL, NULL, partOfCommand.c_str(), "", NULL, SW_NORMAL);
         }
         if (partOfCommand == "exit")
         {

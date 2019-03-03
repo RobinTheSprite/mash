@@ -23,7 +23,7 @@ int main(int argc, TCHAR *argv[])
     {
 		GetCurrentDirectory(MAX_PATH, directory);
 		string dir(directory);
-		cout << dir << " >>=>";
+		cout << "MASH: " << dir << " >>=>";
 
         string inputLine;
         getline(cin, inputLine);

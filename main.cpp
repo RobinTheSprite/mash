@@ -36,11 +36,12 @@ int main(int argc, TCHAR *argv[])
         {
             break;
         }
-        char * prt = const_cast<char *>(inputLine.c_str());
+        auto prt = const_cast<char *>(inputLine.c_str());
         if (!CreateProcess(nullptr, prt, nullptr, nullptr, false, NORMAL_PRIORITY_CLASS, nullptr, nullptr, &startupInfo, &processInfo))
         {
             cout << "No command called \"" << prt << "\""<< endl;
         }
+        WaitForSingleObject(processInfo.hProcess, INFINITE);
     }
 
     CloseHandle( processInfo.hProcess );

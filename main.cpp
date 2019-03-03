@@ -37,7 +37,7 @@ int main(int argc, TCHAR *argv[])
             break;
         }
         auto prt = const_cast<char *>(inputLine.c_str());
-        if (!CreateProcess(nullptr, prt, nullptr, nullptr, false, NORMAL_PRIORITY_CLASS, nullptr, nullptr, &startupInfo, &processInfo))
+        if (!CreateProcess(nullptr, prt, nullptr, nullptr, true, NORMAL_PRIORITY_CLASS, nullptr, nullptr, &startupInfo, &processInfo))
         {
             cout << "No command called \"" << prt << "\""<< endl;
         }

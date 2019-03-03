@@ -27,28 +27,22 @@ int main(int argc, TCHAR *argv[])
 
         string inputLine;
         getline(cin, inputLine);
-        stringstream inputStream(inputLine);
-
-        string partOfCommand;
-        while(inputStream >> partOfCommand)
+        if (!cin)
         {
-            if (partOfCommand == "exit")
-            {
-                break;
-            }
-            char * prt = const_cast<char *>(partOfCommand.c_str());
-            if (!CreateProcess(nullptr, prt, nullptr, nullptr, false, NORMAL_PRIORITY_CLASS, nullptr, nullptr, &startupInfo, &processInfo))
-            {
-                cout << "No command called " << prt << endl;
-            }
+            cout << "Error reading input" << endl;
         }
-        if (partOfCommand == "exit")
+
+        if (inputLine == "exit")
         {
             break;
         }
+        char * prt = const_cast<char *>(inputLine.c_str());
+        if (!CreateProcess(nullptr, prt, nullptr, nullptr, false, NORMAL_PRIORITY_CLASS, nullptr, nullptr, &startupInfo, &processInfo))
+        {
+            cout << "No command called \"" << prt << "\""<< endl;
+        }
     }
 
-    WaitForSingleObject(processInfo.hProcess, INFINITE);
     CloseHandle( processInfo.hProcess );
     CloseHandle( processInfo.hThread );
 

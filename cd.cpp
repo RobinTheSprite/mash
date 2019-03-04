@@ -22,4 +22,6 @@ int main(int argc, char * argv[])
             SetCurrentDirectory("..");
         }
     }
+
+    return 0;
 }

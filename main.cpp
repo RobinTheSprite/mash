@@ -26,16 +26,31 @@ int main(int argc, TCHAR *argv[])
 		cout << "MASH: " << dir << " >>=>";
 
         string inputLine;
+
         getline(cin, inputLine);
         if (!cin)
         {
             cout << "Error reading input" << endl;
         }
 
+        stringstream lineParser(inputLine);
+        string singleWord;
+        lineParser >> singleWord;
         if (inputLine == "exit")
         {
             break;
         }
+        else if (singleWord == "cd")
+        {
+            lineParser >> singleWord;
+            if (!singleWord.empty())
+            {
+                SetCurrentDirectory(singleWord.c_str());
+                continue;
+            }
+
+        }
+
         auto prt = const_cast<char *>(inputLine.c_str());
         if (!CreateProcess(nullptr, prt, nullptr, nullptr, true, NORMAL_PRIORITY_CLASS, nullptr, nullptr, &startupInfo, &processInfo))
         {

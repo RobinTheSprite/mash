@@ -14,7 +14,6 @@ int main(int argc, char * argv[])
     {
         if (argv[1] == std::basic_string("."))
         {
-
             SetCurrentDirectory(currentDirectory);
         }
         else if (argv[1] == std::basic_string(".."))

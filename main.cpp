@@ -18,11 +18,11 @@ int main(int argc, TCHAR *argv[])
     ZeroMemory(&startupInfo, sizeof(startupInfo));
     startupInfo.cb = sizeof(startupInfo);
 
-	char directory[MAX_PATH];
+	char currentDirectory[MAX_PATH];
     while(true)
     {
-		GetCurrentDirectory(MAX_PATH, directory);
-		string dir(directory);
+		GetCurrentDirectory(MAX_PATH, currentDirectory);
+		string dir(currentDirectory);
 		cout << "MASH: " << dir << " >>=>";
 
         string inputLine;

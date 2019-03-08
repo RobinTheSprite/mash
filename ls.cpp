@@ -19,8 +19,6 @@ int main(int argc, char * argv[])
 
         FindNextFile(fileHandle, &foundData);
     } while(GetLastError() != ERROR_NO_MORE_FILES);
-
-
-
+    
     return 0;
 }

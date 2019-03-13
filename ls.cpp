@@ -15,6 +15,14 @@ int main(int argc, char * argv[])
     HANDLE fileHandle = FindFirstFile("*", &foundData);
 
     do{
+        if (foundData.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY)
+        {
+            cout << "Directory: ";
+        } 
+        else
+        {
+            cout << "File:      ";
+        }
         cout << foundData.cFileName << endl;
 
         FindNextFile(fileHandle, &foundData);

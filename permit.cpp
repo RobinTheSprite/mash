@@ -10,20 +10,27 @@ int main(int argc, char * argv[])
     {
         if (strcmp(argv[2], "read") == 0)
         {
-           if(SetNamedSecurityInfo(argv[1], SE_FILE_OBJECT, DACL_SECURITY_INFORMATION | OWNER_SECURITY_INFORMATION, nullptr, nullptr, nullptr, nullptr)
+           if(SetNamedSecurityInfo(argv[1],
+                   SE_FILE_OBJECT,
+                   DACL_SECURITY_INFORMATION,
+                   nullptr,
+                   nullptr,
+                   nullptr,
+                   nullptr)
                 != ERROR_SUCCESS)
            {
-               char wszMsgBuff[512];
+               LPTSTR buffer;
                DWORD error = GetLastError();
-               DWORD   dwChars = FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM |
-                                                FORMAT_MESSAGE_IGNORE_INSERTS,
-                                                NULL,
-                                                error,
-                                                0,
-                                                wszMsgBuff,
-                                                512,
-                                                NULL );
-               std::cout << "Error Setting Permissions: " << dwChars << std::endl;
+               FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER |
+                              FORMAT_MESSAGE_FROM_SYSTEM |
+                              FORMAT_MESSAGE_IGNORE_INSERTS,
+                              nullptr,
+                              error,
+                              0,
+                              (LPTSTR)&buffer,
+                              0,
+                              nullptr );
+               std::cout << "Error Setting Permissions: " << buffer << std::endl;
 
 
            }

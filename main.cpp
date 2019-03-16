@@ -9,8 +9,7 @@ using std::stringstream;
 #include "shlobj.h"
 #include "commands.h"
 
-
-int main(int argc, TCHAR *argv[])
+int main()
 {
     STARTUPINFO startupInfo;
     PROCESS_INFORMATION processInfo;

@@ -19,18 +19,18 @@ int main(int argc, char * argv[])
                    nullptr)
                 != ERROR_SUCCESS)
            {
-               LPTSTR buffer;
-               DWORD error = GetLastError();
+               LPTSTR errorMessage;
+               DWORD errorCode = GetLastError();
                FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER |
                               FORMAT_MESSAGE_FROM_SYSTEM |
                               FORMAT_MESSAGE_IGNORE_INSERTS,
                               nullptr,
-                              error,
+                              errorCode,
                               0,
-                              (LPTSTR)&buffer,
+                              (LPTSTR)&errorMessage,
                               0,
                               nullptr );
-               std::cout << "Error Setting Permissions: " << buffer << std::endl;
+               std::cout << "Error Setting Permissions: " << errorMessage << std::endl;
 
 
            }

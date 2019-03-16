@@ -31,8 +31,6 @@ int main(int argc, char * argv[])
                               0,
                               nullptr );
                std::cout << "Error Setting Permissions: " << errorMessage << std::endl;
-
-
            }
         }
     }

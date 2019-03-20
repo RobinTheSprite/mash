@@ -11,6 +11,7 @@ using std::stringstream;
 
 int main()
 {
+    //Set up the processes that will be fired off later
     STARTUPINFO startupInfo;
     PROCESS_INFORMATION processInfo;
 
@@ -20,18 +21,20 @@ int main()
 	char currentDirectory[MAX_PATH];
     while(true)
     {
+        //Print the current directory
 		GetCurrentDirectory(MAX_PATH, currentDirectory);
 		string dir(currentDirectory);
 		cout << "MASH: " << dir << " >>=>";
 
+		//Grab the user's input
         string inputLine;
-
         getline(cin, inputLine);
         if (!cin)
         {
             cout << "Error reading input" << endl;
         }
 
+        //Check for built-in commands
         stringstream lineParser(inputLine);
         string singleWord;
         lineParser >> singleWord;
@@ -50,6 +53,7 @@ int main()
 
         }
 
+        //Spawn the process with the first word of the input
         auto prt = const_cast<char *>(inputLine.c_str());
         if (!CreateProcess(nullptr, prt, nullptr, nullptr, true, NORMAL_PRIORITY_CLASS, nullptr, nullptr, &startupInfo, &processInfo))
         {

@@ -6,6 +6,8 @@
 #include "sddl.h"
 #include <iostream>
 
+//printError
+//Tell me what the last error in this thread was
 void printError()
 {
     LPTSTR errorMessage;
@@ -26,6 +28,8 @@ int main(int argc, char * argv[])
     {
         PACL dacl, newDacl = nullptr;
         PSECURITY_DESCRIPTOR security;
+
+        //Get the existing DACL for the file
         GetNamedSecurityInfo(
                 argv[1],
                 SE_FILE_OBJECT,
@@ -37,6 +41,7 @@ int main(int argc, char * argv[])
                 &security
                 );
 
+        //Get the SID for "Everyone"
         PSID sid;
         DWORD lenSid = SECURITY_MAX_SID_SIZE;
         sid = LocalAlloc(LMEM_FIXED, lenSid);
@@ -45,11 +50,13 @@ int main(int argc, char * argv[])
             printError();
         }
 
+        //Set up the new ACE
         EXPLICIT_ACCESS rule;
         ZeroMemory(&rule, sizeof(EXPLICIT_ACCESS));
         rule.grfInheritance = SUB_CONTAINERS_AND_OBJECTS_INHERIT;
         BuildTrusteeWithSid(&rule.Trustee, sid);
 
+        //Decide what the ACE will do
         if (strcmp(argv[2], "read") == 0)
         {
             rule.grfAccessPermissions = GENERIC_READ;
@@ -66,11 +73,13 @@ int main(int argc, char * argv[])
             rule.grfAccessMode = GRANT_ACCESS;
         }
 
+        //Stick the new ACE into the DACL
         if (SetEntriesInAcl(1, &rule, dacl, &newDacl) != ERROR_SUCCESS)
         {
             printError();
         }
 
+        //Stick the DACL back into the file
         if(SetNamedSecurityInfo(argv[1],
                                 SE_FILE_OBJECT,
                                 DACL_SECURITY_INFORMATION,

@@ -71,6 +71,16 @@ int main(int argc, char * argv[])
             printError();
         }
 
+        for (unsigned int i = 0; i < newDacl->AclSize; ++i)
+        {
+            LPVOID * ace;
+            GetAce(newDacl, i, ace);
+            if (Header.AceType == ACCESS_DENIED_ACE_TYPE)
+            {
+
+            }
+        }
+
         if(SetNamedSecurityInfo(argv[1],
                                 SE_FILE_OBJECT,
                                 DACL_SECURITY_INFORMATION,

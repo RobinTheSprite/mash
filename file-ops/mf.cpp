@@ -4,13 +4,15 @@
 #include <iostream>
 #include <windows.h>
 
+//Syntax for command is: mf <filename>
 int main(int argc, char * argv[])
 {
     if (argc > 1)
     {
+        //Attempt to create the file, otherwise print an error message
        if ( CreateFile(
                 argv[1],
-                GENERIC_READ | GENERIC_WRITE,
+                GENERIC_ALL,
                 FILE_SHARE_READ,
                 nullptr,
                 CREATE_NEW,

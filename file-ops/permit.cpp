@@ -5,14 +5,15 @@
 #include "lmcons.h"
 #include "sddl.h"
 #include <iostream>
+#include <vector>
 
 //printError
 //Tell me what the last error in this thread was
 void printError()
 {
-    LPTSTR errorMessage;
+    LPTSTR errorMessage = nullptr;
     DWORD errorCode = GetLastError();
-    FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM,
+    FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
                    nullptr,
                    errorCode,
                    0,
@@ -22,6 +23,29 @@ void printError()
     std::cout << "Error Setting Permissions: " << errorMessage << std::endl;
 }
 
+//resetDenyAccess
+//Deletes ACEs that deny access
+//Does seem to do this, but access is still denied after deletion
+void resetDenyAccess(PACL &dacl)
+{
+    for (DWORD i = 0; i < dacl->AceCount; ++i)
+    {
+        ACCESS_DENIED_ACE * ace = nullptr;
+        if (!GetAce(dacl, i, (LPVOID*)&ace))
+        {
+            printError();
+            break;
+        }
+
+        if (ace->Header.AceType == ACCESS_DENIED_ACE_TYPE)
+        {
+            DeleteAce(dacl, i);
+        }
+    }
+}
+
+//Syntax for command is:
+//permit <filename> [reset] [read | !read] [write | !write] [execute | !execute]
 int main(int argc, char * argv[])
 {
     if (argc > 1)
@@ -50,44 +74,77 @@ int main(int argc, char * argv[])
             printError();
         }
 
-        //Set up the new ACE
-        EXPLICIT_ACCESS rule;
-        ZeroMemory(&rule, sizeof(EXPLICIT_ACCESS));
-        rule.grfInheritance = SUB_CONTAINERS_AND_OBJECTS_INHERIT;
-        BuildTrusteeWithSid(&rule.Trustee, sid);
+        //Set every permission specified on the command line
+        std::vector<EXPLICIT_ACCESS> rules;
+        if (argc > 2)
+        {
+            for (auto i = 2; i < argc; ++i)
+            {
+                //Set up the new ACE
+                EXPLICIT_ACCESS rule;
+                ZeroMemory(&rule, sizeof(EXPLICIT_ACCESS));
+                rule.grfInheritance = SUB_CONTAINERS_AND_OBJECTS_INHERIT;
+                BuildTrusteeWithSid(&rule.Trustee, sid);
 
-        //Decide what the ACE will do
-        if (strcmp(argv[2], "read") == 0)
-        {
-            rule.grfAccessPermissions = GENERIC_READ;
-            rule.grfAccessMode = GRANT_ACCESS;
-        }
-        else if (strcmp(argv[2], "write") == 0)
-        {
-            rule.grfAccessPermissions = GENERIC_WRITE;
-            rule.grfAccessMode = GRANT_ACCESS;
-        }
-        else if (strcmp(argv[2], "execute") == 0)
-        {
-            rule.grfAccessPermissions = GENERIC_EXECUTE;
-            rule.grfAccessMode = GRANT_ACCESS;
+                //Decide what permissions the ACE will set
+                if (argv[i][0] == '!')
+                {
+                    if (strcmp(argv[i], "!read") == 0)
+                    {
+                        rule.grfAccessPermissions = GENERIC_READ;
+                        rule.grfAccessMode = DENY_ACCESS;
+                        rules.emplace_back(rule);
+                    }
+
+                    if (strcmp(argv[i], "!write") == 0)
+                    {
+                        rule.grfAccessPermissions = GENERIC_WRITE;
+                        rule.grfAccessMode = DENY_ACCESS;
+                        rules.emplace_back(rule);
+                    }
+
+                    if (strcmp(argv[i], "!execute") == 0)
+                    {
+                        rule.grfAccessPermissions = GENERIC_EXECUTE;
+                        rule.grfAccessMode = DENY_ACCESS;
+                        rules.emplace_back(rule);
+                    }
+                }
+                else
+                {
+                    if (strcmp(argv[i], "read") == 0)
+                    {
+                        rule.grfAccessPermissions = GENERIC_READ;
+                        rule.grfAccessMode = GRANT_ACCESS;
+                        rules.emplace_back(rule);
+                    }
+
+                    if (strcmp(argv[i], "write") == 0)
+                    {
+                        rule.grfAccessPermissions = GENERIC_WRITE;
+                        rule.grfAccessMode = GRANT_ACCESS;
+                        rules.emplace_back(rule);
+                    }
+
+                    if (strcmp(argv[i], "execute") == 0)
+                    {
+                        rule.grfAccessPermissions = GENERIC_EXECUTE;
+                        rule.grfAccessMode = GRANT_ACCESS;
+                        rules.emplace_back(rule);
+                    }
+
+                    if(strcmp(argv[i], "reset") == 0)
+                    {
+                        resetDenyAccess(dacl);
+                    }
+                }
+            }
         }
 
         //Stick the new ACE into the DACL
-        if (SetEntriesInAcl(1, &rule, dacl, &newDacl) != ERROR_SUCCESS)
+        if (SetEntriesInAcl((ULONG)rules.size(), rules.data(), dacl, &newDacl) != ERROR_SUCCESS)
         {
             printError();
-        }
-
-
-        for (unsigned int i = 0; i < newDacl->AclSize; ++i)
-        {
-            LPVOID * ace;
-            GetAce(newDacl, i, ace);
-            if (Header.AceType == ACCESS_DENIED_ACE_TYPE)
-            {
-
-            }
         }
 
         //Stick the DACL back into the file

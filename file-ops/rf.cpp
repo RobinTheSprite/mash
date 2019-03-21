@@ -4,10 +4,12 @@
 #include <iostream>
 #include <windows.h>
 
+//Syntax for command is: rf <filename>
 int main(int argc, char * argv[])
 {
     if (argc > 1)
     {
+        //Attempt to remove the file, otherwise print an error message
         if ( DeleteFile(argv[1])
              == 0)
         {

@@ -60,12 +60,23 @@ int main()
         {
             lineParser >> singleWord;
             size_t isAssignment = singleWord.find('=');
-            if (isAssignment != string::npos)
+            string varName;
+            string varValue;
+            if(singleWord.back() == '=')
             {
-                string varName = singleWord.substr(0, isAssignment - 1);
-                string varValue = singleWord.substr(isAssignment + 1, string::npos);
+                singleWord.pop_back();
+                varName = singleWord;
+                lineParser >> singleWord;
+                varValue = singleWord;
                 userVariables[varName] = varValue;
             }
+            else if (isAssignment != string::npos)
+            {
+                varName = singleWord.substr(0, isAssignment);
+                varValue = singleWord.substr(isAssignment + 1, string::npos);
+                userVariables[varName] = varValue;
+            }
+            continue;
         }
 
         //Spawn the process with the first word of the input

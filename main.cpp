@@ -6,7 +6,7 @@ using std::endl;
 using std::string;
 #include <sstream>
 using std::stringstream;
-#include "shlobj.h"
+#include "ShlObj.h"
 #include "commands.h"
 
 int main()
@@ -17,6 +17,7 @@ int main()
 
     ZeroMemory(&startupInfo, sizeof(startupInfo));
     startupInfo.cb = sizeof(startupInfo);
+    ZeroMemory(&processInfo, sizeof(processInfo));
 
 	char currentDirectory[MAX_PATH];
     while(true)

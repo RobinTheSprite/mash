@@ -6,6 +6,7 @@ using std::endl;
 using std::string;
 #include <sstream>
 using std::stringstream;
+#include <map>
 #include "ShlObj.h"
 #include "commands.h"
 
@@ -18,6 +19,8 @@ int main()
     ZeroMemory(&startupInfo, sizeof(startupInfo));
     startupInfo.cb = sizeof(startupInfo);
     ZeroMemory(&processInfo, sizeof(processInfo));
+
+    std::map<string, string> userVariables;
 
 	char currentDirectory[MAX_PATH];
     while(true)
@@ -52,6 +55,17 @@ int main()
                 continue;
             }
 
+        }
+        else if (singleWord == "var")
+        {
+            lineParser >> singleWord;
+            size_t isAssignment = singleWord.find('=');
+            if (isAssignment != string::npos)
+            {
+                string varName = singleWord.substr(0, isAssignment - 1);
+                string varValue = singleWord.substr(isAssignment + 1, string::npos);
+                userVariables[varName] = varValue;
+            }
         }
 
         //Spawn the process with the first word of the input

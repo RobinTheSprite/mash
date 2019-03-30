@@ -76,6 +76,16 @@ int main()
                 varValue = singleWord.substr(isAssignment + 1, string::npos);
                 userVariables[varName] = varValue;
             }
+
+            varName = singleWord;
+            lineParser >> singleWord;
+            if (singleWord == "=")
+            {
+                lineParser >> singleWord;
+                varValue = singleWord;
+                userVariables[varName] = varValue;
+            }
+
             continue;
         }
 

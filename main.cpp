@@ -1,21 +1,14 @@
 #include <iostream>
-
 using std::cout;
 using std::cin;
 using std::endl;
-
 #include <string>
-
 using std::string;
-
 #include <sstream>
-
 using std::stringstream;
-
 #include <algorithm>
 #include <map>
 #include "shlobj.h"
-#include "commands.h"
 
 int main()
 {
@@ -45,11 +38,11 @@ int main()
             cout << "Error reading input" << endl;
         }
 
+        //Insert the values of any listed variables
         stringstream insertVarValues(inputLine);
         string singleWord;
         while (insertVarValues >> singleWord)
         {
-            std::vector<string> vars;
             string varName;
             string varValue;
             if (singleWord.front() == '$')
@@ -80,7 +73,6 @@ int main()
                 SetCurrentDirectory(singleWord.c_str());
                 continue;
             }
-
         }
         else if (singleWord == "var")
         {
@@ -88,15 +80,21 @@ int main()
             size_t isAssignment = singleWord.find('=');
             string varName;
             string varValue;
-            if (singleWord.back() == '=')
+
+            if (singleWord.front() == '=')
+            {
+                std::cout << "Variables need to be named" << std::endl;
+                continue;
+            }
+
+            if (singleWord.back() == '=') // var name= value
             {
                 singleWord.pop_back();
                 varName = singleWord;
-                lineParser >> singleWord;
-                varValue = singleWord;
+                lineParser >> varValue;
                 userVariables[varName] = varValue;
             }
-            else if (isAssignment != string::npos)
+            else if (isAssignment != string::npos) //var name=value
             {
                 varName = singleWord.substr(0, isAssignment);
                 varValue = singleWord.substr(isAssignment + 1, string::npos);
@@ -105,11 +103,9 @@ int main()
 
             varName = singleWord;
             lineParser >> singleWord;
-            if (singleWord == "=")
+            if (singleWord == "=") //var name = value
             {
-                lineParser >> singleWord;
-                varValue = singleWord;
-                userVariables[varName] = varValue;
+                lineParser >> userVariables[varName];
             }
 
             continue;

@@ -10,6 +10,30 @@ using std::stringstream;
 #include <map>
 #include "shlobj.h"
 
+//insertVariableValues
+//Strips out any variable names and replaces them with the correct values
+void insertVariableValues(string & inputLine, const std::map<string, string> & userVariables)
+{
+    string singleWord;
+    stringstream insertVarValues(inputLine);
+    while (insertVarValues >> singleWord)
+    {
+        string varName;
+        string varValue;
+        if (singleWord.front() == '$')
+        {
+            varName = singleWord.substr(1, string::npos);
+            if (userVariables.count(varName) != 0)
+            {
+                varValue = userVariables.at(varName);
+                size_t whereToInsert = inputLine.find(singleWord);
+                inputLine.erase(whereToInsert, singleWord.size());
+                inputLine.insert(whereToInsert, varValue);
+            }
+        }
+    }
+}
+
 int main()
 {
     //Set up the processes that will be fired off later
@@ -21,6 +45,7 @@ int main()
     ZeroMemory(&processInfo, sizeof(processInfo));
 
     std::map<string, string> userVariables;
+    bool runInBackground{false};
 
     char currentDirectory[MAX_PATH];
     while (true)
@@ -39,27 +64,11 @@ int main()
         }
 
         //Insert the values of any listed variables
-        stringstream insertVarValues(inputLine);
-        string singleWord;
-        while (insertVarValues >> singleWord)
-        {
-            string varName;
-            string varValue;
-            if (singleWord.front() == '$')
-            {
-                varName = singleWord.substr(1, string::npos);
-                if (userVariables.count(varName) != 0)
-                {
-                    varValue = userVariables.at(varName);
-                    size_t whereToInsert = inputLine.find(singleWord);
-                    inputLine.erase(whereToInsert, singleWord.size());
-                    inputLine.insert(whereToInsert, varValue);
-                }
-            }
-        }
+        insertVariableValues(inputLine, userVariables);
 
         //Check for built-in commands
         stringstream lineParser(inputLine);
+        string singleWord;
         lineParser >> singleWord;
         if (inputLine == "exit")
         {
@@ -110,6 +119,11 @@ int main()
 
             continue;
         }
+        else if (singleWord == "bg")
+        {
+            runInBackground = true;
+            inputLine = inputLine.substr(3, string::npos);
+        }
 
         //Spawn the process with the first word of the input
         auto prt = const_cast<char *>(inputLine.c_str());
@@ -118,7 +132,12 @@ int main()
         {
             cout << "No command called \"" << prt << "\"" << endl;
         }
-        WaitForSingleObject(processInfo.hProcess, INFINITE);
+
+        if(!runInBackground)
+        {
+            WaitForSingleObject(processInfo.hProcess, INFINITE);
+        }
+        runInBackground = false;
     }
 
     CloseHandle(processInfo.hProcess);

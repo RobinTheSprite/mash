@@ -8,7 +8,45 @@ using std::string;
 using std::stringstream;
 #include <algorithm>
 #include <map>
-#include "shlobj.h"
+#include "ShlObj.h"
+
+void setVarNameAndValue(stringstream &lineParser, string &singleWord, string &varName, string &varValue)
+{
+    size_t isAssignment = singleWord.find('=');
+    if (singleWord.back() == '=') // var name= value
+    {
+        singleWord.pop_back();
+        varName = singleWord;
+        lineParser >> varValue;
+    }
+    else if (isAssignment != string::npos) //var name=value
+    {
+        varName = singleWord.substr(0, isAssignment);
+        varValue = singleWord.substr(isAssignment + 1, string::npos);
+
+    }
+    else
+    {
+        varName = singleWord;
+        lineParser >> singleWord;
+        if (singleWord == "=") //var name = value
+        {
+            lineParser >> varValue;
+        }
+    }
+}
+
+string getPath()
+{
+    size_t bufferSize = 2000;
+    char buffer[2000];
+    if (GetEnvironmentVariable("Path", buffer, bufferSize) == 0)
+    {
+        cout << "Error getting the path" << endl;
+    }
+
+    return buffer;
+}
 
 //insertVariableValues
 //Strips out any variable names and replaces them with the correct values
@@ -20,7 +58,14 @@ void insertVariableValues(string & inputLine, const std::map<string, string> & u
     {
         string varName;
         string varValue;
-        if (singleWord.front() == '$')
+        if (singleWord == "$path")
+        {
+            varValue = getPath();
+            size_t whereToInsert = inputLine.find(singleWord);
+            inputLine.erase(whereToInsert, singleWord.size());
+            inputLine.insert(whereToInsert, varValue);
+        }
+        else if (singleWord.front() == '$')
         {
             varName = singleWord.substr(1, string::npos);
             if (userVariables.count(varName) != 0)
@@ -86,37 +131,32 @@ int main()
         else if (singleWord == "var")
         {
             lineParser >> singleWord;
-            size_t isAssignment = singleWord.find('=');
             string varName;
             string varValue;
 
             if (singleWord.front() == '=')
             {
-                std::cout << "Variables need to be named" << std::endl;
+                cout << "Variables need to be named" << endl;
                 continue;
             }
 
-            if (singleWord.back() == '=') // var name= value
-            {
-                singleWord.pop_back();
-                varName = singleWord;
-                lineParser >> varValue;
-                userVariables[varName] = varValue;
-            }
-            else if (isAssignment != string::npos) //var name=value
-            {
-                varName = singleWord.substr(0, isAssignment);
-                varValue = singleWord.substr(isAssignment + 1, string::npos);
-                userVariables[varName] = varValue;
-            }
+            setVarNameAndValue(lineParser, singleWord, varName, varValue);
 
-            varName = singleWord;
-            lineParser >> singleWord;
-            if (singleWord == "=") //var name = value
+            if (!varName.empty() && !varValue.empty())
             {
-                lineParser >> userVariables[varName];
-            }
+                if (varName == "path")
+                {
+                    string path = getPath();
+                    path.append(varValue);
+                    path.append(";");
 
+                    SetEnvironmentVariable("Path", path.data());
+                }
+                else
+                {
+                    userVariables[varName] = varValue;
+                }
+            }
             continue;
         }
         else if (singleWord == "bg")

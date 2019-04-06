@@ -3,6 +3,7 @@
 //
 #include <iostream>
 #include <windows.h>
+#include "../mash-error.h"
 
 //Syntax for command is: rf <filename>
 int main(int argc, char * argv[])
@@ -13,18 +14,7 @@ int main(int argc, char * argv[])
         if ( DeleteFile(argv[1])
              == 0)
         {
-            LPTSTR errorMessage;
-            DWORD errorCode = GetLastError();
-            FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER |
-                           FORMAT_MESSAGE_FROM_SYSTEM |
-                           FORMAT_MESSAGE_IGNORE_INSERTS,
-                           nullptr,
-                           errorCode,
-                           0,
-                           (LPTSTR)&errorMessage,
-                           0,
-                           nullptr );
-            std::cout << "Error Deleting File \""<< argv[1] <<"\": "  << errorMessage << std::endl;
+            printError();
         }
     }
 }

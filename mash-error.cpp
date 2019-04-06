@@ -20,5 +20,5 @@ void printError()
                    (LPTSTR)&errorMessage,
                    0,
                    nullptr );
-    std::cout << "Error Setting Permissions: " << errorMessage << std::endl;
+    std::cout << "Error: " << errorMessage << std::endl;
 }

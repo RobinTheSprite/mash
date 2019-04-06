@@ -5,6 +5,7 @@
 #include <fileapi.h>
 #include <windows.h>
 #include <iostream>
+#include "../mash-error.h"
 
 //Syntax for command is: md <filename>
 int main(int argc, char * argv[])
@@ -17,6 +18,10 @@ int main(int argc, char * argv[])
             if (GetLastError() == ERROR_ALREADY_EXISTS)
             {
                 std::cout << "The directory \"" << argv[1] << "\" already exists" << std::endl;
+            }
+            else
+            {
+                printError();
             }
         }
     }

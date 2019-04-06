@@ -7,27 +7,12 @@
 #include <iphlpapi.h>
 #include <IcmpAPI.h>
 #include <inaddr.h>
+#include <vector>
+#include <numeric>
+#include "mash-error.h"
 
 #pragma comment(lib, "iphlpapi.lib")
 #pragma comment(lib, "ws2_32.lib")
-
-//printError
-//Tell me what the last error in this thread was
-void printError()
-{
-    LPTSTR errorMessage = nullptr;
-    DWORD errorCode = GetLastError();
-    FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER
-                 | FORMAT_MESSAGE_FROM_SYSTEM
-                 | FORMAT_MESSAGE_IGNORE_INSERTS,
-                   nullptr,
-                   errorCode,
-                   0,
-                   (LPTSTR)&errorMessage,
-                   0,
-                   nullptr );
-    std::cout << "Error Setting Permissions: " << errorMessage << std::endl;
-}
 
 int main(int argc, char * argv[])
 {
@@ -44,6 +29,7 @@ int main(int argc, char * argv[])
             std::cout << "That was not an IP address" << std::endl;
         }
 
+        std::vector<size_t> responseTimes;
         //Send out five ICMP echoes
         for (auto i = 0; i < 5; ++i)
         {
@@ -66,11 +52,16 @@ int main(int argc, char * argv[])
                 auto theReply = (PICMP_ECHO_REPLY)reply;
                 in_addr replyAddress{};
                 replyAddress.S_un.S_addr = theReply->Address;
-
+                responseTimes.push_back(theReply->RoundTripTime);
                 std::cout << "Ping Received from " << inet_ntoa(replyAddress)
                           << " in " << theReply->RoundTripTime << " milliseconds" << std::endl;
             }
         }
+        std::cout << std::endl;
+        std::cout << responseTimes.size() << " of 5 replies recieved" << std::endl;
+        std::cout << "Average Respsonse Time: "
+                  << std::accumulate(responseTimes.begin(), responseTimes.end(), 0) / responseTimes.size()
+                  << " milliseconds" << std::endl;
     }
     IcmpCloseHandle(icmpHandle);
 }

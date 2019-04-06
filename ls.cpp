@@ -3,6 +3,7 @@
 //
 #include "shlobj.h"
 #include <iostream>
+#include "mash-error.h"
 using std::cout;
 using std::endl;
 
@@ -11,11 +12,17 @@ int main(int argc, char * argv[])
 {
     //Get the current directory
     char currentDirectory[MAX_PATH];
-    GetCurrentDirectory(MAX_PATH, currentDirectory);
+    if (GetCurrentDirectory(MAX_PATH, currentDirectory) == 0)
+    {
+        printError();
+    }
 
     //Get a handle to the first file in the current directory
     WIN32_FIND_DATA foundData;
-    HANDLE fileHandle = FindFirstFile("*", &foundData);
+    if (HANDLE fileHandle = FindFirstFile("*", &foundData) == INVALID_HANDLE_VALUE)
+    {
+        printError();
+    }
 
     //Find and print out the first and every subsequent file and directory
     do{
@@ -29,7 +36,10 @@ int main(int argc, char * argv[])
         }
         cout << foundData.cFileName << endl;
 
-        FindNextFile(fileHandle, &foundData);
+        if (FindNextFile(fileHandle, &foundData) == 0)
+        {
+            printError();
+        }
     } while(GetLastError() != ERROR_NO_MORE_FILES);
     
     return 0;

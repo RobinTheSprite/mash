@@ -17,7 +17,9 @@ void printError()
 {
     LPTSTR errorMessage = nullptr;
     DWORD errorCode = GetLastError();
-    FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+    FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER
+                 | FORMAT_MESSAGE_FROM_SYSTEM
+                 | FORMAT_MESSAGE_IGNORE_INSERTS,
                    nullptr,
                    errorCode,
                    0,
@@ -34,14 +36,15 @@ int main(int argc, char * argv[])
    LPVOID reply[1024];
     if (argc > 1)
     {
+        //Get the IP address from the command line
         unsigned long ipAddress = 0;
-
         ipAddress = inet_addr(argv[1]);
         if(ipAddress == 0)
         {
             std::cout << "That was not an IP address" << std::endl;
         }
 
+        //Send out five ICMP echoes
         for (auto i = 0; i < 5; ++i)
         {
             int retVal = IcmpSendEcho(
@@ -59,6 +62,7 @@ int main(int argc, char * argv[])
             }
             else
             {
+                //Put the results on the screen
                 auto theReply = (PICMP_ECHO_REPLY)reply;
                 in_addr replyAddress{};
                 replyAddress.S_un.S_addr = theReply->Address;

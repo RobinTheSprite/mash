@@ -10,6 +10,8 @@ using std::stringstream;
 #include <map>
 #include "ShlObj.h"
 
+//setVarNameAndValue
+//Handles when the user sets a variable
 void setVarNameAndValue(stringstream &lineParser, string &singleWord, string &varName, string &varValue)
 {
     size_t isAssignment = singleWord.find('=');
@@ -36,6 +38,8 @@ void setVarNameAndValue(stringstream &lineParser, string &singleWord, string &va
     }
 }
 
+//getPath
+//Returns the PATH environment variable for the current process as a string
 string getPath()
 {
     size_t bufferSize = 2000;

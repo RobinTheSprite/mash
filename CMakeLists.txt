@@ -3,8 +3,8 @@ project(mash)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(mash main.cpp)
+add_executable(mash main.cpp mash-error.cpp)
 
-add_executable(ping ping.cpp)
+add_executable(ping ping.cpp mash-error.cpp)
 
 

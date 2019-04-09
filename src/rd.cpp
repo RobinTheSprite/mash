@@ -2,9 +2,8 @@
 // Created by Mark on 3/15/2019.
 //
 
-#include <error.h>
+#include <Windows.h>
 #include <fileapi.h>
-#include <windows.h>
 #include <iostream>
 
 //Syntax for command is: rd <filename>

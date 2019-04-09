@@ -10,6 +10,8 @@ using std::stringstream;
 #include <map>
 #include "ShlObj.h"
 
+namespace mash
+{
 //setVarNameAndValue
 //Handles when the user sets a variable
 void setVarNameAndValue(stringstream &lineParser, string &singleWord, string &varName, string &varValue)
@@ -83,6 +85,8 @@ void insertVariableValues(string & inputLine, const std::map<string, string> & u
     }
 }
 
+}
+
 int main()
 {
     //Set up the processes that will be fired off later
@@ -113,7 +117,7 @@ int main()
         }
 
         //Insert the values of any listed variables
-        insertVariableValues(inputLine, userVariables);
+        mash::insertVariableValues(inputLine, userVariables);
 
         //Check for built-in commands
         stringstream lineParser(inputLine);
@@ -144,13 +148,13 @@ int main()
                 continue;
             }
 
-            setVarNameAndValue(lineParser, singleWord, varName, varValue);
+            mash::setVarNameAndValue(lineParser, singleWord, varName, varValue);
 
             if (!varName.empty() && !varValue.empty())
             {
                 if (varName == "path")
                 {
-                    string path = getPath();
+                    string path = mash::getPath();
                     path.append(varValue);
                     path.append(";");
 

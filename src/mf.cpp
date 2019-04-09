@@ -1,9 +1,10 @@
 //
 // Created by Mark on 3/15/2019.
 //
+#include <Windows.h>
 #include <iostream>
-#include <windows.h>
 #include "../mash-error.h"
+using mash::printError;
 
 //Syntax for command is: mf <filename>
 int main(int argc, char * argv[])

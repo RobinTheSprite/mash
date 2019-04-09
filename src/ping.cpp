@@ -9,7 +9,8 @@
 #include <inaddr.h>
 #include <vector>
 #include <numeric>
-#include "mash-error.h"
+#include "../mash-error.h"
+using mash::printError;
 
 #pragma comment(lib, "iphlpapi.lib")
 #pragma comment(lib, "ws2_32.lib")

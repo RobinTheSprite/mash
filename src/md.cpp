@@ -1,11 +1,11 @@
 //
 // Created by Mark on 3/15/2019.
 //
-#include <error.h>
+#include <Windows.h>
 #include <fileapi.h>
-#include <windows.h>
 #include <iostream>
 #include "../mash-error.h"
+using mash::printError;
 
 //Syntax for command is: md <filename>
 int main(int argc, char * argv[])
@@ -21,7 +21,7 @@ int main(int argc, char * argv[])
             }
             else
             {
-                printError();
+                mash::printError();
             }
         }
     }

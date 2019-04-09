@@ -1,12 +1,13 @@
 //
 // Created by Mark on 3/7/2019.
 //
-#include "aclapi.h"
+#include "AclAPI.h"
 #include "lmcons.h"
 #include "sddl.h"
 #include <iostream>
 #include <vector>
 #include "../mash-error.h"
+using mash::printError;
 
 //resetDenyAccess
 //Deletes ACEs that deny access
@@ -18,7 +19,7 @@ void resetDenyAccess(PACL &dacl)
         ACCESS_DENIED_ACE * ace = nullptr;
         if (!GetAce(dacl, i, (LPVOID*)&ace))
         {
-            printError();
+            mash::printError();
             break;
         }
 

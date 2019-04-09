@@ -5,6 +5,9 @@
 #include <Windows.h>
 #include <iostream>
 
+namespace mash
+{
+
 //printError
 //Tell me what the last error in this thread was
 void printError()
@@ -21,4 +24,6 @@ void printError()
                    0,
                    nullptr );
     std::cout << "Error: " << errorMessage << std::endl;
+}
+
 }

@@ -60,9 +60,12 @@ int main(int argc, char * argv[])
         }
         std::cout << std::endl;
         std::cout << responseTimes.size() << " of 5 replies recieved" << std::endl;
-        std::cout << "Average Respsonse Time: "
-                  << std::accumulate(responseTimes.begin(), responseTimes.end(), 0) / responseTimes.size()
-                  << " milliseconds" << std::endl;
+        if (!responseTimes.empty())
+        {
+            std::cout << "Average Respsonse Time: "
+                      << std::accumulate(responseTimes.begin(), responseTimes.end(), 0) / responseTimes.size()
+                      << " milliseconds" << std::endl;
+        }
     }
     IcmpCloseHandle(icmpHandle);
 }

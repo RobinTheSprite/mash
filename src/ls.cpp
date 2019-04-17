@@ -57,6 +57,7 @@ int main(int argc, char * argv[])
 
         cout << foundData.cFileName;
 
+        //Check if the user wants all of the file's info
         if (argc > 1)
         {
             if (strcmp(argv[1], "-all") == 0)

@@ -23,7 +23,7 @@ void printError()
                    (LPTSTR)&errorMessage,
                    0,
                    nullptr );
-    std::cout << "Error: " << errorMessage << std::endl;
+    std::cout << "Error in Mash: " << errorMessage << std::endl;
 }
 
 }
